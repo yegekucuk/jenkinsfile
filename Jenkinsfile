@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-	GIT_CREDENTIALS_ID = 'github-credential'
+        GIT_CREDENTIALS_ID = 'github-credentials'
         DOCKER_CREDENTIALS_ID = 'docker-credentials'
         DOCKER_IMAGE = 'yegekucuk2/yegejava'
         SSH_CREDENTIALS_ID = 'debian10'
@@ -12,7 +12,8 @@ pipeline {
     stages {
         stage('Clone Repository') {
             steps {
-                git url: 'https://github.com/yegekucuk/jenkinsfile.git',
+                git branch: 'main', 
+                    url: 'https://github.com/yegekucuk/jenkinsfile.git',
                     credentialsId: "${GIT_CREDENTIALS_ID}"
             }
         }
@@ -20,8 +21,8 @@ pipeline {
         stage('Docker Build') {
             steps {
                 script {
-			def buildId = env.BUILD_ID
-                    	dockerImage = docker.build("${DOCKER_IMAGE}:${buildId}")
+                    def buildId = env.BUILD_ID
+                    dockerImage = docker.build("${DOCKER_IMAGE}:${buildId}")
                 }
             }
         }
@@ -29,9 +30,9 @@ pipeline {
         stage('Docker Push') {
             steps {
                 script {
-			def buildId = env.BUILD_ID
-                    	docker.withRegistry('', "${DOCKER_CREDENTIALS_ID}") {
-				dockerImage.push(buildId)
+                    def buildId = env.BUILD_ID
+                    docker.withRegistry('', "${DOCKER_CREDENTIALS_ID}") {
+                        dockerImage.push(buildId)
                     }
                 }
             }
