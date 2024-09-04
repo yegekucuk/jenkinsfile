@@ -39,10 +39,13 @@ pipeline {
         }
 
         stage('Deploy to Remote Machine') {
-            steps {
-                sshagent(credentials: ["${SSH_CREDENTIALS_ID}"]) {
+		steps {
+                sshagent(credentials: [SSH_CREDENTIALS_ID]) {
                     sh """
-                        ssh ${SSH_TARGET} 'docker pull ${DOCKER_IMAGE}:${env.BUILD_ID} && docker run -d --name my-container ${DOCKER_IMAGE}:${env.BUILD_ID}'
+                        ssh ${SSH_TARGET} '
+                            docker pull ${DOCKER_IMAGE}:${env.BUILD_ID} &&
+                            docker run -d --name my-container ${DOCKER_IMAGE}:${env.BUILD_ID}
+                        '
                     """
                 }
             }
