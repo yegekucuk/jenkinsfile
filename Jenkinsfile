@@ -44,7 +44,7 @@ pipeline {
                     sh """
                         ssh ${SSH_TARGET} '
                             docker pull ${DOCKER_IMAGE}:${env.BUILD_ID} &&
-                            docker run -d --name my-container ${DOCKER_IMAGE}:${env.BUILD_ID}
+                            docker run --name my-container ${DOCKER_IMAGE}:${env.BUILD_ID} || docker rm -f my-container && docker run --name my-container ${DOCKER_IMAGE}:${env.BUILD_ID}
                         '
                     """
                 }
